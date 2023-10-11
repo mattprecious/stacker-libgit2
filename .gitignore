@@ -4,5 +4,8 @@
 ### Mac OS ###
 .DS_Store
 
+deps/
 libgit2/
-libssh/
+libssh2/
+openssl/
+resources/

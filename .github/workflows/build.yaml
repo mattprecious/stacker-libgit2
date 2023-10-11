@@ -1,0 +1,49 @@
+name: build
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - '**'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        arch: [amd64]
+        cmake-arch: [x86_64]
+        openssl-arch: [linux-x86_64]
+        include:
+          - os: macOS-latest
+            arch: x86_64
+            cmake-arch: x86_64
+            openssl-arch: darwin64-x86_64-cc
+          - os: macOS-latest
+            arch: aarch64
+            cmake-arch: arm64
+            openssl-arch: darwin64-arm64-cc
+          # TODO: build on 'windows-latest'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+
+      - name: Install Dependencies
+        if: matrix.os == 'macOS-latest'
+        run: brew install coreutils
+
+      - name: Build native library
+        run: ./.github/workflows/build.sh -a ${{ matrix.arch }} -c ${{ matrix.cmake-arch }} -o ${{ matrix.openssl-arch }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jvm-native-libraries
+          path: ./resources/*
+          if-no-files-found: error
