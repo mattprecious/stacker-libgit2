@@ -61,7 +61,8 @@ function build() {
     -DCMAKE_INSTALL_PREFIX="$deps" \
     -DCMAKE_IGNORE_PREFIX_PATH="/usr" \
     -DCMAKE_OSX_ARCHITECTURES=$CMAKE_ARCH \
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_STATIC_LIBS=OFF
   cmake --build libssh2/build --target install
 
   # Stuck on 1.4.6 due to https://github.com/libgit2/libgit2/issues/6371
