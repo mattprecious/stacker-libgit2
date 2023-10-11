@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export CMAKE_BUILD_PARALLEL_LEVEL=`nproc`
+export CMAKE_BUILD_PARALLEL_LEVEL=$((`nproc`+1))
 
 OS_ARCH=""
 CMAKE_ARCH=""
@@ -50,8 +50,7 @@ function build() {
   git clone --depth 1 --branch openssl-3.1.3 https://github.com/openssl/openssl.git
   pushd openssl
   ./Configure $OPENSSL_ARCH --prefix=$deps
-  make -j$(nproc)
-  make -j$(nproc) install_sw
+  make -j$CMAKE_BUILD_PARALLEL_LEVEL install_sw
   popd
 
   git clone --depth 1 --branch libssh2-1.11.0 https://github.com/libssh2/libssh2.git
